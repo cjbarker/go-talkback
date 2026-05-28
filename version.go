@@ -1,8 +1,9 @@
 package main
 
-// version is set at build time via:
-//
-//	go build -ldflags "-X main.version=<version>"
-//
-// When built without that flag (e.g. `go run .`) it falls back to "dev".
-var version = "dev"
+// version, commit, and date are set at build time via -ldflags.
+// They fall back to safe defaults for untagged/local builds.
+var (
+	version = "dev"
+	commit  = "unknown"
+	date    = "unknown"
+)

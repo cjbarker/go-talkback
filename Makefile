@@ -1,8 +1,10 @@
 WHISPER_PREFIX ?= /opt/homebrew/opt/whisper-cpp
 GGML_PREFIX    ?= /opt/homebrew/opt/ggml
 
-VERSION     := $(shell cat VERSION)
-LDFLAGS     := -ldflags "-X main.version=$(VERSION)"
+VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+COMMIT  := $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
+DATE    := $(shell date -u '+%Y-%m-%dT%H:%M:%SZ')
+LDFLAGS := -s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)
 
 # CGO_CFLAGS: add whisper.h and ggml.h to include path.
 # CGO_LDFLAGS: add the library search path and rpath so the linker finds
@@ -20,7 +22,7 @@ export CGO_ENABLED = 1
 export CGO_CFLAGS
 export CGO_LDFLAGS
 
-.PHONY: build run test clean model icns app dmg stubs
+.PHONY: build run test clean model icns app dmg stubs version
 
 # Install stub dylibs for missing ggml backends into the Homebrew ggml lib dir.
 # whisper.cpp Go bindings (v1.8+) reference libggml-cpu / libggml-metal /
@@ -39,11 +41,14 @@ stubs:
 	done
 
 build: stubs
-	go build $(LDFLAGS) -o talkback .
+	go build -trimpath -ldflags "$(LDFLAGS)" -o talkback .
 	# Re-sign after build: the Go linker applies -ldflags -X substitutions after
 	# computing the ad-hoc signature, leaving the signature invalid on macOS 15+.
 	# codesign --force replaces the stale linker signature with a fresh one.
 	codesign --force --sign - talkback
+
+version:
+	@echo $(VERSION)
 
 run: build
 	./talkback

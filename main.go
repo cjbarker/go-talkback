@@ -114,7 +114,7 @@ Examples:
 	noFillerCLIFlag = *noFillerFlag
 
 	if *showVersion {
-		fmt.Printf("talkback v%s\n", version)
+		fmt.Printf("talkback %s\ncommit: %s\nbuilt:  %s\n", version, commit, date)
 		os.Exit(0)
 	}
 
