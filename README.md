@@ -15,10 +15,11 @@ Transcription runs entirely on-device via [whisper.cpp](https://github.com/ggml-
 
 ## Setup
 
-**1. Install whisper-cpp**
+**1. Install dependencies**
 
 ```sh
 brew install whisper-cpp
+brew install ggml
 ```
 
 **2. Download a model**
@@ -64,10 +65,13 @@ Grant all three in **System Settings → Privacy & Security**.
 | Release **Option+Space** | Transcribe and type result at cursor |
 | Click menu bar icon | Open menu |
 | Menu → Start/Stop Listening | Toggle recording without hotkey |
+| Menu → Model: … | Open model submenu |
+| Menu → Model → *name* | Switch active transcription model (downloads if needed) |
 | Menu → Hotkey: … | Open hotkey submenu |
 | Menu → Hotkey → *preset* | Switch push-to-talk hotkey |
 | Menu → Show Floating Button | Show the on-screen push-to-talk button |
 | Menu → Hide Floating Button | Dismiss the floating button |
+| Menu → Launch at Login | Toggle automatic startup at login |
 | Menu → Quit | Exit |
 
 The transcribed text is typed into whatever application has keyboard focus — terminal, browser, editor, chat app, etc.
@@ -123,32 +127,39 @@ Run `talkback -help` for the full reference including model descriptions and req
 | Flag | `-model` | — | Path to ggml model file; takes precedence over `$TALKBACK_MODEL` |
 | Env | `TALKBACK_MODEL` | `~/.local/share/go-talkback/models/ggml-base.en.bin` | Path to ggml model file |
 | Flag | `-log-level` | `warn` | Log verbosity |
-| Config file | `hotkey` | `Option+Space` | Push-to-talk hotkey (set via menu) |
+| Config file | `hotkey` | `Option+Space` | Push-to-talk hotkey (set via Hotkey submenu) |
+| Config file | `model` | `base.en` | Active model name (set via Model submenu) |
+| Config file | `showFloatButton` | `false` | Whether the floating button is visible |
+| Config file | `launchAtLogin` | `false` | Whether to start at login (set via menu) |
 
 **Config file:** `~/.config/go-talkback/config.json`
 
 ```json
 {
-  "hotkey": "Option+Space"
+  "hotkey": "Option+Space",
+  "model": "base.en",
+  "showFloatButton": false,
+  "launchAtLogin": false
 }
 ```
 
-Edited directly or via the **Hotkey** submenu in the menu bar.
+All settings are persisted automatically when changed via the menu.
 
 ## Building manually
 
 If you need to build without `make`:
 
 ```sh
-CGO_CFLAGS="-I/opt/homebrew/opt/whisper-cpp/libexec/include" \
-CGO_LDFLAGS="-L/opt/homebrew/opt/whisper-cpp/libexec/lib -rpath /opt/homebrew/opt/whisper-cpp/libexec/lib" \
+CGO_CFLAGS="-I/opt/homebrew/opt/whisper-cpp/include -I/opt/homebrew/opt/ggml/include" \
+CGO_LDFLAGS="-L/opt/homebrew/opt/whisper-cpp/lib -rpath /opt/homebrew/opt/whisper-cpp/lib \
+             -L/opt/homebrew/opt/ggml/lib -rpath /opt/homebrew/opt/ggml/lib" \
 CGO_ENABLED=1 go build -o talkback .
 ```
 
-The `WHISPER_PREFIX` variable in the Makefile can be overridden if whisper-cpp is installed to a non-default location:
+The `WHISPER_PREFIX` and `GGML_PREFIX` variables in the Makefile can be overridden if the libraries are installed to non-default locations:
 
 ```sh
-make build WHISPER_PREFIX=/usr/local/opt/whisper-cpp/libexec
+make build WHISPER_PREFIX=/usr/local/opt/whisper-cpp GGML_PREFIX=/usr/local/opt/ggml
 ```
 
 ## Testing
@@ -200,7 +211,7 @@ TALKBACK_MODEL=~/.local/share/go-talkback/models/ggml-base.en.bin go test ./tran
 ## Troubleshooting
 
 **`whisper.h` not found**
-Ensure `brew install whisper-cpp` completed and that `WHISPER_PREFIX` points to the correct path. Default is `/opt/homebrew/opt/whisper-cpp/libexec`.
+Ensure `brew install whisper-cpp` and `brew install ggml` completed. Default paths are `/opt/homebrew/opt/whisper-cpp` and `/opt/homebrew/opt/ggml`. Override with `make build WHISPER_PREFIX=… GGML_PREFIX=…` if installed elsewhere.
 
 **Hotkey doesn't work**
 Grant Input Monitoring permission in System Settings → Privacy & Security → Input Monitoring, then restart the app.
