@@ -12,17 +12,18 @@ const DefaultHotkey = "Option+Space"
 
 // Config holds all persisted application settings.
 type Config struct {
-	Hotkey          string   `json:"hotkey"`
-	Model           string   `json:"model"`
-	ShowFloatButton bool     `json:"showFloatButton"`
-	FloatX          *float64 `json:"floatX,omitempty"`
-	FloatY          *float64 `json:"floatY,omitempty"`
-	LaunchAtLogin   bool     `json:"launchAtLogin"`
+	Hotkey            string   `json:"hotkey"`
+	Model             string   `json:"model"`
+	ShowFloatButton   bool     `json:"showFloatButton"`
+	FloatX            *float64 `json:"floatX,omitempty"`
+	FloatY            *float64 `json:"floatY,omitempty"`
+	LaunchAtLogin     bool     `json:"launchAtLogin"`
+	StripFillerWords  bool     `json:"stripFillerWords"`
 }
 
 // Load reads the config file, returning defaults for any missing fields.
 func Load() Config {
-	c := Config{Hotkey: DefaultHotkey}
+	c := Config{Hotkey: DefaultHotkey, StripFillerWords: true}
 	data, err := os.ReadFile(path())
 	if err != nil {
 		return c

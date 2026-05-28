@@ -18,6 +18,7 @@ import (
 	"github.com/cbarker/go-talkback/audio"
 	"github.com/cbarker/go-talkback/config"
 	"github.com/cbarker/go-talkback/dialog"
+	"github.com/cbarker/go-talkback/filler"
 	"github.com/cbarker/go-talkback/floatbutton"
 	hk "github.com/cbarker/go-talkback/hotkey"
 	"github.com/cbarker/go-talkback/inject"
@@ -51,9 +52,12 @@ var (
 	mHotkeyTop *systray.MenuItem   // parent "Hotkey: …" item
 	mFloat          *systray.MenuItem
 	mLaunchAtLogin  *systray.MenuItem
+	mStripFillers   *systray.MenuItem
 	mQuit           *systray.MenuItem
 
-	floatVisible bool
+	floatVisible    bool
+	noFillerRemoval bool
+	noFillerCLIFlag bool
 
 	// Hotkey relay — the event loop always reads from these two channels.
 	// When the active handler changes, only the relay goroutine is swapped.
@@ -66,9 +70,10 @@ var (
 )
 
 func main() {
-	modelFlag   := flag.String("model", "", "Path to ggml model file (overrides $TALKBACK_MODEL)")
-	logLevel    := flag.String("log-level", "warn", "Log level: debug, info, warn, error")
-	showVersion := flag.Bool("version", false, "Print version and exit")
+	modelFlag        := flag.String("model", "", "Path to ggml model file (overrides $TALKBACK_MODEL)")
+	logLevel         := flag.String("log-level", "warn", "Log level: debug, info, warn, error")
+	showVersion      := flag.Bool("version", false, "Print version and exit")
+	noFillerFlag     := flag.Bool("no-filler-removal", false, "Disable automatic filler word removal (um, uh, you know, etc.)")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `go-talkback — local speech-to-text for macOS
@@ -106,6 +111,7 @@ Examples:
 	}
 
 	flag.Parse()
+	noFillerCLIFlag = *noFillerFlag
 
 	if *showVersion {
 		fmt.Printf("talkback v%s\n", version)
@@ -137,6 +143,10 @@ Examples:
 func onReady() {
 	initIcons()
 	appConfig = config.Load()
+	if noFillerCLIFlag {
+		appConfig.StripFillerWords = false
+	}
+	noFillerRemoval = !appConfig.StripFillerWords
 
 	// --- First-run model check ---
 	// Must happen on the main thread (NSAlert requirement) before any other setup.
@@ -211,6 +221,11 @@ func onReady() {
 	mLaunchAtLogin = systray.AddMenuItem("Launch at Login", "Start Talkback automatically at login")
 	if appConfig.LaunchAtLogin {
 		mLaunchAtLogin.Check()
+	}
+
+	mStripFillers = systray.AddMenuItem("Strip Filler Words", "Remove um, uh, you know, etc. from transcription")
+	if appConfig.StripFillerWords {
+		mStripFillers.Check()
 	}
 
 	systray.AddSeparator()
@@ -348,6 +363,9 @@ func onReady() {
 			case <-mLaunchAtLogin.ClickedCh:
 				toggleLaunchAtLogin()
 
+			case <-mStripFillers.ClickedCh:
+				toggleFillerRemoval()
+
 			case <-mQuit.ClickedCh:
 				cleanup()
 				systray.Quit()
@@ -403,6 +421,21 @@ func toggleLaunchAtLogin() {
 		}
 		appConfig.LaunchAtLogin = true
 		mLaunchAtLogin.Check()
+	}
+	if err := config.Save(appConfig); err != nil {
+		slog.Warn("failed to save config", "err", err)
+	}
+}
+
+// toggleFillerRemoval flips the filler-word stripping setting, updates the
+// menu checkmark, and persists the setting.
+func toggleFillerRemoval() {
+	appConfig.StripFillerWords = !appConfig.StripFillerWords
+	noFillerRemoval = !appConfig.StripFillerWords
+	if appConfig.StripFillerWords {
+		mStripFillers.Check()
+	} else {
+		mStripFillers.Uncheck()
 	}
 	if err := config.Save(appConfig); err != nil {
 		slog.Warn("failed to save config", "err", err)
@@ -564,6 +597,9 @@ func stopAndTranscribe() {
 		slog.Debug("transcription result", "text", text)
 
 		text = strings.TrimSpace(text)
+		if !noFillerRemoval {
+			text = filler.Strip(text)
+		}
 		if text != "" {
 			inject.Text(text + " ")
 		}
