@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Identity -->
+    <key>CFBundleIdentifier</key>
+    <string>com.cbarker.talkback</string>
+
+    <key>CFBundleName</key>
+    <string>Talkback</string>
+
+    <key>CFBundleDisplayName</key>
+    <string>Talkback</string>
+
+    <key>CFBundleExecutable</key>
+    <string>talkback</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleSignature</key>
+    <string>????</string>
+
+    <!-- Versioning — replaced by sed in `make app` -->
+    <key>CFBundleVersion</key>
+    <string>VERSION_PLACEHOLDER</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>VERSION_PLACEHOLDER</string>
+
+    <!-- Icon -->
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+
+    <!-- macOS deployment target -->
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+
+    <!-- Menu bar only — no Dock icon -->
+    <key>LSUIElement</key>
+    <true/>
+
+    <!-- Privacy usage descriptions -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Talkback records your microphone while you hold the push-to-talk hotkey to transcribe speech locally.</string>
+
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Talkback uses Accessibility APIs to type transcribed text into the focused application.</string>
+
+    <key>NSAccessibilityUsageDescription</key>
+    <string>Talkback uses Accessibility to type transcribed text at the cursor position.</string>
+
+    <key>NSInputMonitoringUsageDescription</key>
+    <string>Talkback monitors the global Option+Space hotkey to detect when to start recording.</string>
+</dict>
+</plist>

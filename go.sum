@@ -1,0 +1,16 @@
+fyne.io/systray v1.12.0 h1:CA1Kk0e2zwFlxtc02L3QFSiIbxJ/P0n582YrZHT7aTM=
+fyne.io/systray v1.12.0/go.mod h1:RVwqP9nYMo7h5zViCBHri2FgjXF7H2cub7MAq4NSoLs=
+github.com/gen2brain/malgo v0.11.24 h1:hHcIJVfzWcEDHFdPl5Dl/CUSOjzOleY0zzAV8Kx+imE=
+github.com/gen2brain/malgo v0.11.24/go.mod h1:f9TtuN7DVrXMiV/yIceMeWpvanyVzJQMlBecJFVMxww=
+github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20241218161240-3de9deead575 h1:QHo1YPoFYvsGwsosPmgyyhueJqOpXyTfiUvoFir1J6k=
+github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20241218161240-3de9deead575/go.mod h1:qyHjS/50ORo01H0NsuEEGsQR9VCtOcEye0gUl2sx1s8=
+github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20260316114418-79218f51d02f h1:ctVoHBvcTq/7bm7e7zqXl72dhAqkZab1ae1oubPb2tA=
+github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20260316114418-79218f51d02f/go.mod h1:qyHjS/50ORo01H0NsuEEGsQR9VCtOcEye0gUl2sx1s8=
+github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20260319084013-9386f2394010 h1:+m6yO3VYSAUUzpG9lz4ktBx0cCba/Nvww8OKDgnapQQ=
+github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20260319084013-9386f2394010/go.mod h1:qyHjS/50ORo01H0NsuEEGsQR9VCtOcEye0gUl2sx1s8=
+github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=
+github.com/godbus/dbus/v5 v5.1.0/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
+golang.design/x/hotkey v0.4.1 h1:zLP/2Pztl4WjyxURdW84GoZ5LUrr6hr69CzJFJ5U1go=
+golang.design/x/hotkey v0.4.1/go.mod h1:M8SGcwFYHnKRa83FpTFQoZvPO5vVT+kWPztFqTQKmXA=
+golang.org/x/sys v0.15.0 h1:h48lPFYpsTvQJZF4EKyI4aLHaev3CxivZmv7yZig9pc=
+golang.org/x/sys v0.15.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
