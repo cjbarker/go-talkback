@@ -1,0 +1,12 @@
+# Build output
+talkback
+
+# Packaging artifacts
+build/
+dist/
+
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/
